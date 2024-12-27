@@ -1,4 +1,4 @@
- // swiftlint:disable cyclomatic_complexity
+// swiftlint:disable cyclomatic_complexity
 
 public extension StagedChangeset where Collection: RangeReplaceableCollection, Collection.Element: Differentiable {
     /// Creates a new `StagedChangeset` from the two collections.
