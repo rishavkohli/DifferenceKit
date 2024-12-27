@@ -1,4 +1,4 @@
-// swiftlint:disable cyclomatic_complexity
+ // swiftlint:disable cyclomatic_complexity
 
 public extension StagedChangeset where Collection: RangeReplaceableCollection, Collection.Element: Differentiable {
     /// Creates a new `StagedChangeset` from the two collections.
@@ -85,26 +85,26 @@ public extension StagedChangeset where Collection: RangeReplaceableCollection, C
         // The 1st stage changeset.
         // - Includes:
         //   - element updates
-        if !result.updated.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(firstStageElements),
-                    elementUpdated: result.updated
-                )
-            )
-        }
-
-        // The 2nd stage changeset.
-        // - Includes:
-        //   - element deletes
-        if !result.deleted.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(secondStageElements),
-                    elementDeleted: result.deleted
-                )
-            )
-        }
+//        if !result.updated.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(firstStageElements) ,
+//                    elementUpdated: result.updated
+//                )
+//            )
+//        }
+//
+//        // The 2nd stage changeset.
+//        // - Includes:
+//        //   - element deletes
+//        if !result.deleted.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(secondStageElements),
+//                    elementDeleted: result.deleted
+//                )
+//            )
+//        }
 
         // The 3rd stage changeset.
         // - Includes:
@@ -114,7 +114,9 @@ public extension StagedChangeset where Collection: RangeReplaceableCollection, C
             changesets.append(
                 Changeset(
                     data: target,
+                    elementDeleted: result.deleted, 
                     elementInserted: result.inserted,
+                    elementUpdated: result.updated,
                     elementMoved: result.moved
                 )
             )
@@ -366,68 +368,75 @@ public extension StagedChangeset where Collection: RangeReplaceableCollection, C
         // The 1st stage changeset.
         // - Includes:
         //   - element updates
-        if !elementUpdated.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(firstStageSections),
-                    elementUpdated: elementUpdated
-                )
-            )
-        }
-
-        // The 2nd stage changeset.
-        // - Includes:
-        //   - section deletes
-        //   - element deletes
-        if !sectionResult.deleted.isEmpty || !elementDeleted.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(secondStageSections),
-                    sectionDeleted: sectionResult.deleted,
-                    elementDeleted: elementDeleted
-                )
-            )
-        }
-
-        // The 3rd stage changeset.
-        // - Includes:
-        //   - section inserts
-        //   - section moves
-        if !sectionResult.inserted.isEmpty || !sectionResult.moved.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(thirdStageSections),
-                    sectionInserted: sectionResult.inserted,
-                    sectionMoved: sectionResult.moved
-                )
-            )
-        }
-
-        // The 4th stage changeset.
-        // - Includes:
-        //   - element inserts
-        //   - element moves
-        if !elementInserted.isEmpty || !elementMoved.isEmpty {
-            changesets.append(
-                Changeset(
-                    data: Collection(fourthStageSections),
-                    elementInserted: elementInserted,
-                    elementMoved: elementMoved
-                )
-            )
-        }
+//        if !elementUpdated.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(firstStageSections),
+//                    elementUpdated: elementUpdated
+//                )
+//            )
+//        }
+//
+//        // The 2nd stage changeset.
+//        // - Includes:
+//        //   - section deletes
+//        //   - element deletes
+//        if !sectionResult.deleted.isEmpty || !elementDeleted.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(secondStageSections),
+//                    sectionDeleted: sectionResult.deleted,
+//                    elementDeleted: elementDeleted
+//                )
+//            )
+//        }
+//
+//        // The 3rd stage changeset.
+//        // - Includes:
+//        //   - section inserts
+//        //   - section moves
+//        if !sectionResult.inserted.isEmpty || !sectionResult.moved.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(thirdStageSections),
+//                    sectionInserted: sectionResult.inserted,
+//                    sectionMoved: sectionResult.moved
+//                )
+//            )
+//        }
+//
+//        // The 4th stage changeset.
+//        // - Includes:
+//        //   - element inserts
+//        //   - element moves
+//        if !elementInserted.isEmpty || !elementMoved.isEmpty {
+//            changesets.append(
+//                Changeset(
+//                    data: Collection(fourthStageSections),
+//                    elementInserted: elementInserted,
+//                    elementMoved: elementMoved
+//                )
+//            )
+//        }
 
         // The 5th stage changeset.
         // - Includes:
         //   - section updates
-        if !sectionResult.updated.isEmpty {
+      //  if !sectionResult.updated.isEmpty {
             changesets.append(
                 Changeset(
                     data: target,
-                    sectionUpdated: sectionResult.updated
+                    sectionDeleted: sectionResult.deleted,
+                    sectionInserted: sectionResult.inserted, 
+                    sectionUpdated: sectionResult.updated,
+                    sectionMoved: sectionResult.moved,
+                    elementDeleted: elementDeleted,
+                    elementInserted: elementInserted, 
+                    elementUpdated: elementUpdated,
+                    elementMoved: elementMoved
                 )
             )
-        }
+       // }
 
         // Set the target to `data` of the last stage.
         if !changesets.isEmpty {
