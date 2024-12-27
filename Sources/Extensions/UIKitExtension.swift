@@ -52,7 +52,7 @@ public extension UITableView {
     ///                updates should be stopped and performed reloadData. Default is nil.
     ///   - setData: A closure that takes the collection as a parameter.
     ///              The collection should be set to data-source of UITableView.
-    func reload<C>(
+        func reload<C>(
         using stagedChangeset: StagedChangeset<C>,
         deleteSectionsAnimation: @autoclosure () -> RowAnimation,
         insertSectionsAnimation: @autoclosure () -> RowAnimation,
@@ -73,10 +73,10 @@ public extension UITableView {
                 setData(data)
                 return reloadData()
             }
+            
 
             _performBatchUpdates {
                 setData(changeset.data)
-
                 if !changeset.sectionDeleted.isEmpty {
                     deleteSections(IndexSet(changeset.sectionDeleted), with: deleteSectionsAnimation())
                 }
@@ -86,28 +86,37 @@ public extension UITableView {
                 }
 
                 if !changeset.sectionUpdated.isEmpty {
-                    reloadSections(IndexSet(changeset.sectionUpdated), with: reloadSectionsAnimation())
+                    reloadSections(IndexSet(changeset.sectionUpdated.filter({ return !changeset.sectionDeleted.contains($0)
+                    })), with: reloadSectionsAnimation())
                 }
 
                 for (source, target) in changeset.sectionMoved {
                     moveSection(source, toSection: target)
                 }
-
+                
                 if !changeset.elementDeleted.isEmpty {
-                    deleteRows(at: changeset.elementDeleted.map { IndexPath(row: $0.element, section: $0.section) }, with: deleteRowsAnimation())
+                    deleteRows(at: changeset.elementDeleted.filter({
+                        return !changeset.sectionDeleted.contains($0.section)}).map { IndexPath(row: $0.element, section: $0.section) }, with: deleteRowsAnimation())
                 }
 
                 if !changeset.elementInserted.isEmpty {
-                    insertRows(at: changeset.elementInserted.map { IndexPath(row: $0.element, section: $0.section) }, with: insertRowsAnimation())
+                    insertRows(at: changeset.elementInserted.filter({
+                        return !changeset.sectionDeleted.contains($0.section)}).map { IndexPath(row: $0.element, section: $0.section) }, with: insertRowsAnimation())
                 }
 
                 if !changeset.elementUpdated.isEmpty {
-                    reloadRows(at: changeset.elementUpdated.map { IndexPath(row: $0.element, section: $0.section) }, with: reloadRowsAnimation())
+                    reloadRows(at: changeset.elementUpdated.filter({
+                        return !changeset.sectionDeleted.contains($0.section) && !changeset.elementDeleted.contains($0)}).map { IndexPath(row: $0.element, section: $0.section) }, with: reloadRowsAnimation())
                 }
 
                 for (source, target) in changeset.elementMoved {
-                    moveRow(at: IndexPath(row: source.element, section: source.section), to: IndexPath(row: target.element, section: target.section))
+                    if !changeset.sectionDeleted.contains(source.section) {
+                        moveRow(at: IndexPath(row: source.element, section: source.section), to: IndexPath(row: target.element, section: target.section))
+                    }
+                    
                 }
+                
+               
             }
         }
     }
